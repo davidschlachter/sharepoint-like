@@ -15,11 +15,17 @@ var Like = mongoose.model('Like', likeModel);
 exports.addLike = function (req, res) {
 	var query = {};
 	if (req.body.userid && (typeof req.body.userid === 'string' || req.body.userid instanceof String)) {
-		query.userid = scrub(req.body.userid);
+		query['userid'] = scrub(req.body.userid);
 	}
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
-		query.postid = scrub(req.body.postid);
+		query['postid'] = scrub(req.body.postid);
 	}
+
+	console.log("The query object is:", query);
+	console.log("The userid was:", req.body.userid);
+	console.log("The postid was:", req.body.postid);
+	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid) )
+	console.log("The req.body was: ", req.body);
 
 	var like = new Like(query);
 	like.save(function (err) {
@@ -35,7 +41,7 @@ exports.addLike = function (req, res) {
 exports.getLikes = function (req, res) {
 	var query = {};
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
-		query.postid = scrub(req.body.postid);
+		query['postid'] = scrub(req.body.postid);
 	}
 
 	Like.find(query)
