@@ -5,7 +5,7 @@ var express = require('express'),
 
 
 // GET home page.
-router.get('/', checkAuth, function (req, res, next) {
+router.get('/', function (req, res, next) {
 	console.log("Success");
 });
 

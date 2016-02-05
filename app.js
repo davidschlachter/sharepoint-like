@@ -2,11 +2,10 @@
 "use strict";
 
 var express = require('express'),
-	//path = require('path'),
+	path = require('path'),
 	logger = require('morgan'),
 	compression = require('compression'),
 	mongoose = require('mongoose'),
-	MongoStore = require('connect-mongo')(session),
 	bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
