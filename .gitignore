@@ -31,3 +31,7 @@ node_modules
 
 # Optional REPL history
 .node_repl_history
+
+# Ignore the config files
+config/mongoose.js
+pm2config.json
