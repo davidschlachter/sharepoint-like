@@ -1,2 +1,2 @@
 # sharepoint-like
-A 'Like' button for posts on SharePoint 2010
+A simple back-end for a ‘Like’ button, written in NodeJS with MongoDB.
