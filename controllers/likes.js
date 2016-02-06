@@ -31,13 +31,14 @@ exports.addLike = function (req, res) {
 	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid))
 	console.log("The req.body was: ", req.body);
 
-	var like = new Like(query);
-	like.save(function (err) {
+	Like.findOneAndUpdate(query, query, {
+		upsert: true
+	}, function (err, like) {
 		if (err) {
 			res.send(err);
 			console.log("Error adding to database was: " + err);
 		} else {
-			console.log("Like added: ", query);
+			console.log("Like added: ", like);
 		}
 	});
 	getLikesList(res, query);
