@@ -25,20 +25,25 @@ exports.addLike = function (req, res) {
 		query['sitekey'] = scrub(req.body.sitekey);
 	}
 
-	console.log("The query object is:", query);
-	console.log("The userid was:", req.body.userid);
-	console.log("The postid was:", req.body.postid);
-	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid))
 	console.log("The req.body was: ", req.body);
+	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid))
 
-	Like.findOneAndUpdate(query, query, {
-		upsert: true
-	}, function (err, like) {
+	Like.remove(query, function(err, result) {
 		if (err) {
-			res.send(err);
-			console.log("Error adding to database was: " + err);
-		} else {
-			console.log("Like added: ", like);
+			console.log(err);
+		}
+		console.log(result.result);
+		if (result.result.n === 0) {
+			Like.findOneAndUpdate(query, query, {
+				upsert: true
+			}, function (err, like) {
+				if (err) {
+					res.send(err);
+					console.log("Error adding to database was: " + err);
+				} else {
+					console.log("Like added: ", like);
+				}
+			});
 		}
 	});
 	getLikesList(res, query);
