@@ -45,7 +45,7 @@ $(document).ready(function () {
 		// Generate a unique identifier for the post — I'll use the title here, but this should be done better!
 		var postid = $(this).find("h3").text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/ /g, '');
 		$(this).find("h3").css("float", "left");
-		$(this).find("h3").after('<p id="' + postid + '"> <span style="margin-left:1em;background-color:orange;" onclick="likePost(\'' + postid + '\', \'' + userid + '\', this)"><i style="margin-right:0.5em;" class="fa fa-thumbs-up"></i><i style="margin-right:0.5em;" class="fa fa-thumbs-o-up"></i>Like this post!</span></p>');
+		$(this).find("h3").after('<p id="' + postid + '"> <span style="margin-left:1em;border: 1px solid rgb(128,128,128);padding:0.2em;padding-right:0.4em;" onclick="likePost(\'' + postid + '\', \'' + userid + '\', this)"><i style="margin-right:0.5em;" class="fa fa-thumbs-up"></i><i style="margin-right:0.5em;" class="fa fa-thumbs-o-up"></i>Like</span><span class="counter" style="margin-left:0;border: 1px solid rgb(128,128,128);padding:0.2em 0.5em 0.2em;">0</span></p>');
 		console.log(this);
 		$(this).find(".fa-thumbs-up").toggle();
 	});
@@ -58,21 +58,7 @@ $(document).ready(function () {
 			}
 		})
 		.done(function (likesList) {
-			console.log(likesList);
-			// Now, go through an update the state of each like button, based on if the current user has liked it!
-			var postid, i;
-			$("div.blogFloat").each(function () {
-				postid = $(this).find("h3").text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/ /g, '');
-				for (i = 0; i < likesList.length; i++) { 
-				    if (likesList[i].postid === postid) {
-				    	if (likesList[i].userid === userid) {
-							$(this).find(".fa-thumbs-up").toggle();
-							$(this).find(".fa-thumbs-o-up").toggle();
-							break;
-				    	}
-				    }
-				}
-			});
+			processLikes(likesList);
 		});
 });
 
@@ -90,9 +76,33 @@ var likePost = function (postid, userid, caller) {
 			}
 		})
 		.done(function (msg) {
-			console.log("Data Saved: " + msg);
+			processLikes(msg);
 		});
 	console.log(caller);
-	$(caller).find(".fa-thumbs-up").toggle();
-	$(caller).find(".fa-thumbs-o-up").toggle();
 }
+
+var processLikes = function (likesList) {
+	console.log(likesList);
+	// Now, go through an update the state of each like button, based on if the current user has liked it!
+	var postid, i, count, userLikesIt;
+	$("div.blogFloat").each(function () {
+		count = 0;
+		userLikesIt = false;
+		postid = $(this).find("h3").text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/ /g, '');
+		for (i = 0; i < likesList.length; i++) {
+		    if (likesList[i].postid === postid) {
+				count = count + 1;
+		    	if (likesList[i].userid === userid) {
+					$(this).find(".fa-thumbs-up").show();
+					$(this).find(".fa-thumbs-o-up").hide();
+					userLikesIt = true;
+		    	}
+		    }
+		}
+		$(this).find(".counter").text(count);
+		if (userLikesIt === false) {
+			$(this).find(".fa-thumbs-up").hide();
+			$(this).find(".fa-thumbs-o-up").show();
+		}
+	});
+};
