@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 var likeModel = new mongoose.Schema({
 	userid: String,
 	postid: String,
+	sitekey: String,
 	timestamp: {
 		type: Date,
 		default: Date.now
@@ -19,6 +20,9 @@ exports.addLike = function (req, res) {
 	}
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
 		query['postid'] = scrub(req.body.postid);
+	}
+	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
+		query['sitekey'] = scrub(req.body.sitekey);
 	}
 
 	console.log("The query object is:", query);
@@ -43,6 +47,9 @@ exports.getLikes = function (req, res) {
 	var query = {};
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
 		query['postid'] = scrub(req.body.postid);
+	}
+	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
+		query['sitekey'] = scrub(req.body.sitekey);
 	}
 	getLikesList(res, query);
 };
