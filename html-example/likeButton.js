@@ -7,20 +7,22 @@ $(document).ready(function () {
 		// Generate a unique identifier for the post — I'll use the title here, but this should be done better!
 		var postid = $(this).text().replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 		$(this).css("float", "left");
-		$(this).after('<p onclick="likePost("' + postid + '", "' + userid + '")"> Like this post!</p>');
+		$(this).after('<p onclick="likePost(\'' + postid + '\', \'' + userid + '\')"> Like this post!</p>');
 	});
 });
 
 
-
-/*$.ajax({
-		method: "POST",
-		url: "https://schlachter.ca/sharepoint-like/like",
-		data: {
-			userid: user,
-			postid: post
-		}
-	})
-	.done(function (msg) {
-		alert("Data Saved: " + msg);
-	});*/
+var likePost = function(postid, userid) {
+	console.log("We have clicked it!");
+	$.ajax({
+			method: "POST",
+			url: "https://schlachter.ca/sharepoint-like/like",
+			data: {
+				userid: userid,
+				postid: postid
+			}
+		})
+		.done(function (msg) {
+			alert("Data Saved: " + msg);
+		});
+}
