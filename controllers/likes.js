@@ -24,7 +24,7 @@ exports.addLike = function (req, res) {
 	console.log("The query object is:", query);
 	console.log("The userid was:", req.body.userid);
 	console.log("The postid was:", req.body.postid);
-	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid) )
+	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid))
 	console.log("The req.body was: ", req.body);
 
 	var like = new Like(query);
@@ -36,6 +36,7 @@ exports.addLike = function (req, res) {
 			console.log("Like added: ", query);
 		}
 	});
+	getLikesList(res, query);
 };
 
 exports.getLikes = function (req, res) {
@@ -43,7 +44,10 @@ exports.getLikes = function (req, res) {
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
 		query['postid'] = scrub(req.body.postid);
 	}
+	getLikesList(res, query);
+};
 
+var getLikesList = function (res, query) {
 	Like.find(query)
 		.sort({
 			timestamp: -1
@@ -58,7 +62,7 @@ exports.getLikes = function (req, res) {
 		});
 };
 
-function scrub(rawinput) {
+var scrub = function (rawinput) {
 	var output;
 	if (typeof rawinput === 'string' || rawinput instanceof String) {
 		output = rawinput.replace(/&/gi, '&amp;').replace(/</gi, '&lt;').replace(/>/gi, '&gt;');
@@ -66,4 +70,4 @@ function scrub(rawinput) {
 	} else {
 		return "";
 	}
-}
+};

@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 });
 
 // POST a new like
-router.post('/like', likeController.addLike, likeController.getLikes);
+router.post('/like', likeController.addLike);
 
 // Get the current likes
 router.post('/getLikes', likeController.getLikes);
