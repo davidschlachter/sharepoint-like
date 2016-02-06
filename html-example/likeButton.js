@@ -1,4 +1,24 @@
 
+// Protect from weird console issues
+(function() {
+  // Union of Chrome, Firefox, IE, Opera, and Safari console methods
+  var methods = ["assert", "cd", "clear", "count", "countReset",
+    "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed",
+    "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd",
+    "select", "table", "time", "timeEnd", "timeStamp", "timeline",
+    "timelineEnd", "trace", "warn"];
+  var length = methods.length;
+  var console = (window.console = window.console || {});
+  var method;
+  var noop = function() {};
+  while (length--) {
+    method = methods[length];
+    // define undefined methods as noops to prevent errors
+    if (!console[method])
+      console[method] = noop;
+  }
+})();
+
 var userid;
 
 
@@ -21,14 +41,15 @@ $(document).ready(function () {
 	// Get the userID from the top-right menu
 	userid = $("span#zz17_Menu_t").text().replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 
-	$("div.blogFloat h3").each(function () {
+	$("div.blogFloat").each(function () {
 		// Generate a unique identifier for the post — I'll use the title here, but this should be done better!
-		var postid = $(this).text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/ /g, '');
-		$(this).css("float", "left");
-		$(this).after('<p id="' + postid + '"> <span style="margin-left:1em;background-color:orange;" onclick="likePost(\'' + postid + '\', \'' + userid + '\', this)"><i style="margin-right:0.5em;" class="fa fa-thumbs-up"></i><i style="margin-right:0.5em;" class="fa fa-thumbs-o-up"></i>Like this post!</span></p>');
+		var postid = $(this).find("h3").text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/ /g, '');
+		$(this).find("h3").css("float", "left");
+		$(this).find("h3").after('<p id="' + postid + '"> <span style="margin-left:1em;background-color:orange;" onclick="likePost(\'' + postid + '\', \'' + userid + '\', this)"><i style="margin-right:0.5em;" class="fa fa-thumbs-up"></i><i style="margin-right:0.5em;" class="fa fa-thumbs-o-up"></i>Like this post!</span></p>');
+		console.log(this);
+		$(this).find(".fa-thumbs-up").toggle();
 	});
 	
-	var likesList;
 	$.ajax({
 			method: "POST",
 			url: "https://schlachter.ca/sharepoint-like/getLikes",
@@ -36,8 +57,22 @@ $(document).ready(function () {
 				sitekey: "7B8215BF76"
 			}
 		})
-		.done(function (msg) {
-			likesList = msg;
+		.done(function (likesList) {
+			console.log(likesList);
+			// Now, go through an update the state of each like button, based on if the current user has liked it!
+			var postid, i;
+			$("div.blogFloat").each(function () {
+				postid = $(this).find("h3").text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(/ /g, '');
+				for (i = 0; i < likesList.length; i++) { 
+				    if (likesList[i].postid === postid) {
+				    	if (likesList[i].userid === userid) {
+							$(this).find(".fa-thumbs-up").toggle();
+							$(this).find(".fa-thumbs-o-up").toggle();
+							break;
+				    	}
+				    }
+				}
+			});
 		});
 });
 
