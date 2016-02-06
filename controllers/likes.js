@@ -26,7 +26,7 @@ exports.addLike = function (req, res) {
 	}
 
 	console.log("The req.body was: ", req.body);
-	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid))
+	console.log("The results of the scrub were:", scrub(req.body.userid), scrub(req.body.postid));
 
 	Like.remove(query, function(err, result) {
 		if (err) {
@@ -45,15 +45,15 @@ exports.addLike = function (req, res) {
 				}
 			});
 		}
+		delete query['postid'];
+		delete query['userid'];
+		console.log("The query before being passed to getLikesList is: ", query);
+		getLikesList(res, query);
 	});
-	getLikesList(res, query);
 };
 
 exports.getLikes = function (req, res) {
 	var query = {};
-	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
-		query['postid'] = scrub(req.body.postid);
-	}
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
 		query['sitekey'] = scrub(req.body.sitekey);
 	}
@@ -70,6 +70,7 @@ var getLikesList = function (res, query) {
 				console.log("Query in getLikes returned an error:", err);
 				res.send(err);
 			} else {
+				console.log("getLikesList is sending: ", likes);
 				res.json(likes);
 			}
 		});
