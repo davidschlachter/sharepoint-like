@@ -15,17 +15,26 @@ var Like = mongoose.model('Like', likeModel);
 
 exports.addLike = function (req, res) {
 	var query = {};
+	var returnScript = false;
 	if (req.body.userid && (typeof req.body.userid === 'string' || req.body.userid instanceof String)) {
 		query['userid'] = scrub(req.body.userid);
+	} else if (req.query.userid && (typeof req.query.userid === 'string' || req.query.userid instanceof String)) {
+		query['userid'] = scrub(req.query.userid);
+		returnScript = true;
 	}
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
 		query['postid'] = scrub(req.body.postid);
+	} else if (req.query.postid && (typeof req.query.postid === 'string' || req.query.postid instanceof String)) {
+		query['postid'] = scrub(req.query.postid);
 	}
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
 		query['sitekey'] = scrub(req.body.sitekey);
+	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
+		query['sitekey'] = scrub(req.query.sitekey);
 	}
 
 	console.log("The req.body was: ", req.body);
+	console.log("The req.query was: ", req.query);
 
 	Like.remove(query, function(err, result) {
 		if (err) {
@@ -47,19 +56,24 @@ exports.addLike = function (req, res) {
 		delete query['postid'];
 		delete query['userid'];
 		console.log("The query before being passed to getLikesList is: ", query);
-		getLikesList(res, query);
+		getLikesList(res, query, returnScript);
 	});
 };
 
 exports.getLikes = function (req, res) {
 	var query = {};
+	var returnScript = false;
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
 		query['sitekey'] = scrub(req.body.sitekey);
+	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
+		query['sitekey'] = scrub(req.query.sitekey);
+		returnScript = true;
 	}
-	getLikesList(res, query);
+	getLikesList(res, query, returnScript);
 };
 
-var getLikesList = function (res, query) {
+var getLikesList = function (res, query, returnScript) {
+	console.log("Sending likes list with query", query);
 	Like.find(query)
 		.sort({
 			timestamp: -1
@@ -70,7 +84,11 @@ var getLikesList = function (res, query) {
 				res.send(err);
 			} else {
 				console.log("getLikesList is sending: ", likes);
-				res.json(likes);
+				if (returnScript === false) {
+					res.json(likes);
+				} else {
+					res.jsonp(likes);
+				}
 			}
 		});
 };
