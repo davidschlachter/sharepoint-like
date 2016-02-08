@@ -13,7 +13,7 @@ var likeModel = new mongoose.Schema({
 });
 var Like = mongoose.model('Like', likeModel);
 
-exports.addLike = function (req, res) {
+exports.addLike = function (req, res, next) {
 	var query = {};
 	var returnScript = false;
 	if (req.body.userid && (typeof req.body.userid === 'string' || req.body.userid instanceof String)) {
@@ -21,16 +21,22 @@ exports.addLike = function (req, res) {
 	} else if (req.query.userid && (typeof req.query.userid === 'string' || req.query.userid instanceof String)) {
 		query['userid'] = scrub(req.query.userid);
 		returnScript = true;
+	} else {
+		return next("Invalid or empty userid.");
 	}
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
 		query['postid'] = scrub(req.body.postid);
 	} else if (req.query.postid && (typeof req.query.postid === 'string' || req.query.postid instanceof String)) {
 		query['postid'] = scrub(req.query.postid);
+	} else {
+		return next("Invalid or empty postid.");
 	}
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
 		query['sitekey'] = scrub(req.body.sitekey);
 	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
 		query['sitekey'] = scrub(req.query.sitekey);
+	} else {
+		return next("Invalid or empty sitekey.");
 	}
 
 	console.log("The req.body was: ", req.body);
@@ -60,7 +66,7 @@ exports.addLike = function (req, res) {
 	});
 };
 
-exports.getLikes = function (req, res) {
+exports.getLikes = function (req, res, next) {
 	var query = {};
 	var returnScript = false;
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
@@ -68,6 +74,8 @@ exports.getLikes = function (req, res) {
 	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
 		query['sitekey'] = scrub(req.query.sitekey);
 		returnScript = true;
+	} else {
+		return next("Invalid or empty sitekey.");
 	}
 	getLikesList(res, query, returnScript);
 };
