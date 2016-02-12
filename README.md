@@ -4,8 +4,8 @@ A simple back-end for a ‘Like’ button, written in NodeJS with MongoDB. Inten
 The server accepts a POST on `/like` with the following parameters:
 
 - `userid` : The user name (e.g. "David Schlachter")
-- `postid` : An identifier for the object being liked (I use the post titles without spaces)
-- `sitekey`: An identifier for the site/page. When the likes are queried, all likes for a given `sitekey` are returned (I use a random alphanumeric string)
+- `postid` : An identifier for the object being liked (I use the ID of an article in the database)
+- `sitekey`: An identifier for the site/page. When the likes are queried, all likes for a given `sitekey` are returned (I use a random alphanumeric string).
 
 This request returns a JSON object with all the likes for the given `sitekey`, so they can be displayed by the client.
 
