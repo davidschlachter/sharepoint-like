@@ -46,7 +46,7 @@ exports.addLike = function (req, res, next) {
 		if (err) {
 			console.log(err);
 		}
-		console.log(result.result);
+		//console.log(result.result);
 		if (result.result.n === 0) {
 			Like.findOneAndUpdate(query, query, {
 				upsert: true
@@ -55,13 +55,13 @@ exports.addLike = function (req, res, next) {
 					res.send(err);
 					console.log("Error adding to database was: " + err);
 				} else {
-					console.log("Like added: ", like);
+					//console.log("Like added: ", like);
 				}
 			});
 		}
 		delete query['postid'];
 		delete query['userid'];
-		console.log("The query before being passed to getLikesList is: ", query);
+		//console.log("The query before being passed to getLikesList is: ", query);
 		getLikesList(res, query, returnScript);
 	});
 };
@@ -81,7 +81,7 @@ exports.getLikes = function (req, res, next) {
 };
 
 var getLikesList = function (res, query, returnScript) {
-	console.log("Sending likes list with query", query);
+	//console.log("Sending likes list with query", query);
 	Like.find(query)
 		.sort({
 			timestamp: -1
@@ -91,7 +91,7 @@ var getLikesList = function (res, query, returnScript) {
 				console.log("Query in getLikes returned an error:", err);
 				res.send(err);
 			} else {
-				console.log("getLikesList is sending: ", likes);
+				//console.log("getLikesList is sending: ", likes);
 				if (returnScript === false) {
 					res.json(likes);
 				} else {
