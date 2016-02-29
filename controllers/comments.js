@@ -80,7 +80,7 @@ var getCommentsList = function (res, query, returnScript) {
 	//console.log("Sending comments list with query", query);
 	Comment.find(query)
 		.sort({
-			timestamp: -1
+			timestamp: 1
 		})
 		.exec(function (err, comments) {
 			if (err) {
