@@ -50,7 +50,7 @@ exports.addComment = function (req, res, next) {
 	console.log("The req.body was: ", req.body);
 	console.log("The req.query was: ", req.query);
 
-	Comment.save(query, function(err, result) {
+	Comment.create(query, function(err, result) {
 		if (err) {
 			console.log(err);
 		}
