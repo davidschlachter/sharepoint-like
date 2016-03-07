@@ -1,5 +1,6 @@
 
 var mongoose = require('mongoose');
+var Entities = require('html-entities').XmlEntities;
 
 // Define the 'likes' model
 var likeModel = new mongoose.Schema({
@@ -16,25 +17,27 @@ var Like = mongoose.model('Like', likeModel);
 exports.addLike = function (req, res, next) {
 	var query = {};
 	var returnScript = false;
+	entities = new Entities();
+
 	if (req.body.userid && (typeof req.body.userid === 'string' || req.body.userid instanceof String)) {
-		query['userid'] = scrub(req.body.userid);
+		query['userid'] = entities.encodeNonUTF(req.body.userid);
 	} else if (req.query.userid && (typeof req.query.userid === 'string' || req.query.userid instanceof String)) {
-		query['userid'] = scrub(req.query.userid);
+		query['userid'] = entities.encodeNonUTF(req.query.userid);
 		returnScript = true;
 	} else {
 		return next("Invalid or empty userid.");
 	}
 	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
-		query['postid'] = scrub(req.body.postid);
+		query['postid'] = entities.encodeNonUTF(req.body.postid);
 	} else if (req.query.postid && (typeof req.query.postid === 'string' || req.query.postid instanceof String)) {
-		query['postid'] = scrub(req.query.postid);
+		query['postid'] = entities.encodeNonUTF(req.query.postid);
 	} else {
 		return next("Invalid or empty postid.");
 	}
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
-		query['sitekey'] = scrub(req.body.sitekey);
+		query['sitekey'] = entities.encodeNonUTF(req.body.sitekey);
 	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
-		query['sitekey'] = scrub(req.query.sitekey);
+		query['sitekey'] = entities.encodeNonUTF(req.query.sitekey);
 	} else {
 		return next("Invalid or empty sitekey.");
 	}
@@ -69,10 +72,12 @@ exports.addLike = function (req, res, next) {
 exports.getLikes = function (req, res, next) {
 	var query = {};
 	var returnScript = false;
+	entities = new Entities();
+
 	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
-		query['sitekey'] = scrub(req.body.sitekey);
+		query['sitekey'] = entities.encodeNonUTF(req.body.sitekey);
 	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
-		query['sitekey'] = scrub(req.query.sitekey);
+		query['sitekey'] = entities.encodeNonUTF(req.query.sitekey);
 		returnScript = true;
 	} else {
 		return next("Invalid or empty sitekey.");
@@ -99,14 +104,4 @@ var getLikesList = function (res, query, returnScript) {
 				}
 			}
 		});
-};
-
-var scrub = function (rawinput) {
-	var output;
-	if (typeof rawinput === 'string' || rawinput instanceof String) {
-		output = rawinput.replace(/[^0-9a-z, A-Z\-_ ’'‘ÆÐƎƏƐƔĲŊŒẞÞǷȜæðǝəɛɣĳŋœĸſßþƿȝĄƁÇĐƊĘĦĮƘŁØƠŞȘŢȚŦŲƯY̨Ƴąɓçđɗęħįƙłøơşșţțŧųưy̨ƴÁÀÂÄǍĂĀÃÅǺĄÆǼǢƁĆĊĈČÇĎḌĐƊÐÉÈĖÊËĚĔĒĘẸƎƏƐĠĜǦĞĢƔáàâäǎăāãåǻąæǽǣɓćċĉčçďḍđɗðéèėêëěĕēęẹǝəɛġĝǧğģɣĤḤĦIÍÌİÎÏǏĬĪĨĮỊĲĴĶƘĹĻŁĽĿʼNŃN̈ŇÑŅŊÓÒÔÖǑŎŌÕŐỌØǾƠŒĥḥħıíìiîïǐĭīĩįịĳĵķƙĸĺļłľŀŉńn̈ňñņŋóòôöǒŏōõőọøǿơœŔŘŖŚŜŠŞȘṢẞŤŢṬŦÞÚÙÛÜǓŬŪŨŰŮŲỤƯẂẀŴẄǷÝỲŶŸȲỸƳŹŻŽẒŕřŗſśŝšşșṣßťţṭŧþúùûüǔŭūũűůųụưẃẁŵẅƿýỳŷÿȳỹƴźżžẓ]/g, '');
-		return output;
-	} else {
-		return "";
-	}
 };
