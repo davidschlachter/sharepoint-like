@@ -20,4 +20,8 @@ router.get('/comment', commentController.addComment);
 router.post('/getComments', commentController.getComments);
 router.get('/getComments', commentController.getComments);
 
+// Delete a comment
+router.post('/deleteComment', commentController.deleteComment);
+router.get('/deleteComment', commentController.deleteComment);
+
 module.exports = router;

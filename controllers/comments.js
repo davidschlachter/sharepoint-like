@@ -62,6 +62,42 @@ exports.addComment = function (req, res, next) {
 	});
 };
 
+exports.deleteComment = function (req, res, next) {
+	var query = {};
+	if (req.body.commentID && (typeof req.body.commentID === 'string' || req.body.commentID instanceof String)) {
+		query['_id'] = scrub(req.body.commentID);
+	} else if (req.query.commentID && (typeof req.query.commentID === 'string' || req.query.commentID instanceof String)) {
+		query['_id'] = scrub(req.query.commentID);
+		returnScript = true;
+	} else {
+		return next("Invalid or empty commentID.");
+	}
+	if (req.body.sitekey && (typeof req.body.sitekey === 'string' || req.body.sitekey instanceof String)) {
+		query['sitekey'] = scrub(req.body.sitekey);
+	} else if (req.query.sitekey && (typeof req.query.sitekey === 'string' || req.query.sitekey instanceof String)) {
+		query['sitekey'] = scrub(req.query.sitekey);
+	} else {
+		return next("Invalid or empty sitekey.");
+	}
+	if (req.body.postid && (typeof req.body.postid === 'string' || req.body.postid instanceof String)) {
+		query['postid'] = scrub(req.body.postid);
+	} else if (req.query.postid && (typeof req.query.postid === 'string' || req.query.postid instanceof String)) {
+		query['postid'] = scrub(req.query.postid);
+	} else {
+		return next("Invalid or empty postid.");
+	}
+
+	console.log("Before the delete we have:", query);
+
+	Comment.remove(query, function(err) {
+		if (err) {
+			console.log(err);
+		}
+		delete query['_id'];
+		getCommentsList(res, query, returnScript);
+	});
+};
+
 exports.getComments = function (req, res, next) {
 	var query = {};
 	var returnScript = false;
